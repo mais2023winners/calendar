@@ -57,13 +57,12 @@ if __name__ == '__main__':
     createEvent(tester)
 
 
-def secondFetch():
+def calendarFetch():
     page_token = None
     while True:
         events = service.events().list(calendarId='primary', pageToken=page_token).execute()
         for event in events['items']:
             event_data = [event['start'], event['end']]
-            # print(events['location'])
             if 'location' in event:
                 event_data.append(event['location'])
             if 'summary' in events:
