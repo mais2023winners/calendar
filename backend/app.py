@@ -10,9 +10,13 @@ def Ask_GPT():
     print(request.json)
     userMessage = request.json.get(
         "userMessage"
-    )  # this should be handeled by React, I do not know how it looks like haha
+    )
+    userToken = request.json.get(
+        "userToken"
+    )
+      # this should be handeled by React, I do not know how it looks like haha
     response = ConnectToGPT(
-        userMessage
+        userMessage, userToken
     )  # plz ensure that the person working on chat.py is handling the response properly ...
     return response
 

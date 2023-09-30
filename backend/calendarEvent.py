@@ -15,11 +15,12 @@ if os.path.exists('token.json'):
 service = build('calendar', 'v3', credentials=creds)
 
 
-def createEvent(e):
+def createEvent(e,userToken):
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
-    creds = None
+    creds = Credentials.from_authorized_user_info(userToken,SCOPES)
+    service = build('calendar', 'v3', credentials=creds)
     try:
 
         # Call the Calendar API

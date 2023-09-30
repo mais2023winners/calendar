@@ -4,7 +4,7 @@ from calendarEvent import createEvent
 from gmail import create_message, send_message
 
 
-def ConnectToGPT(userMessage: str):
+def ConnectToGPT(userMessage: str, userToken: json):
     openai.api_key = "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"
 
     prompt = """
@@ -86,7 +86,7 @@ def ConnectToGPT(userMessage: str):
     try:
         if payload.get("type") == "calendar_invite":
             print("creating event")
-            print(createEvent(payload.get("data")))
+            print(createEvent(payload.get("data"),userToken))
 
         elif payload.get("type") == "email":
             print("sending email")
