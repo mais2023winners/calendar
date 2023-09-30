@@ -1,6 +1,6 @@
-import os
 import openai
 import json
+# from calendar import createEvent
 
 openai.api_key = "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"
 
@@ -59,20 +59,33 @@ completion = openai.ChatCompletion.create(
         {"role": "system", "content": prompt},
         {
             "role": "user",
-            "content": "Hello! Write an email to ray@gmail.com asking him when he is available for a meeting to work on ECSE223.",
+            "content": "Hello! create an event for my calendar on october 7th 2023 at 5pm for 1 hour period. In that period, i want to do homework for my ECSE 223 class.",
         },
     ],
 )
+# payload = {
+#     "data": {
+#     "startDate": "2023-10-6T09:00:00-07:00",
+#     "endDate": "2023-10-7T09:00:00-07:00",
+#     # // name of the event
+#     "summary": "THis is a tester summary",
+#     "description": None,
+#     "attendeesEmailAddresses": [],
+#     "location": None
+# }
+# }
+
 
 # parse the JSON response to a dict
 
 responseMessage = json.loads(completion.choices[0].message.content)[
     "responseMessage"]
 payload = json.loads(completion.choices[0].message.content).get("payload")
-# print(payload)
-# data = json.loads(completion.choices[0].message.content).get("data")
 
-if (payload.get("type") == "email"):
+if payload.type=="calendar_invite":
+    print(createEvent(payload.data))
+
+elif (payload.get("type") == "email"):
     data = payload.get("data")
 elif (payload.get("type") == "calendar_invite"):
     date = payload.get("calendar_invite")
