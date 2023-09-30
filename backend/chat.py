@@ -1,7 +1,7 @@
 import openai
 import json
-
-from main import createEvent
+from calendarEvent import createEvent
+from gmail import create_message, send_message
 
 def ConnectToGPT(userMessage: str):
     openai.api_key = "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"
@@ -15,9 +15,23 @@ def ConnectToGPT(userMessage: str):
 
     Always respond in this JSON format:
 
-    {
-        chatMessage: {
-            message: string,
+
+{
+    chatMessage: {
+        message: string,
+    },
+    payload?: {
+        type: "calendar_invite" | "email",
+        data: 
+        // if type is "calendar"
+        {
+            startDate: Date,
+            endDate: Date,
+            // name of the event
+            summary: string,
+            description?: string,
+            attendeesEmailAddresses?: string[]  
+            location?: string
         }
         payload?: {
             type: "calendar_invite" | "email",
@@ -50,31 +64,28 @@ def ConnectToGPT(userMessage: str):
 
     """
 
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        temperature=0,
-        messages=[
-            {"role": "system", "content": prompt},
-            {
-                "role": "user",
-                "content": userMessage,
-            },
-        ],
-    )
+completion = openai.ChatCompletion.create(
+    model="gpt-4",
+    temperature=0,
+    messages=[
+        {"role": "system", "content": prompt},
+        {
+            "role": "user",
+            "content": "Hey, create an event on september 30th 2023 at 10pm named ecse223",
+        },
+    ],
+)
 
-    print(completion.choices[0].message)
-    responseMessage = json.loads(completion.choices[0].message.content)["responseMessage"]
-    print(responseMessage)
-    payload = json.loads(completion.choices[0].message.content).get("payload")
+print(completion.choices[0].message.content)
+payload = json.loads(completion.choices[0].message.content).get("payload")
 
-    if payload.type == "calendar_invite":
-        print(createEvent(payload.data))
+print(payload)
 
-    elif payload.get("type") == "email":
-        data = payload.get("data")
-    elif payload.get("type") == "calendar_invite":
-        date = payload.get("calendar_invite")
+if payload.get("type") == "calendar_invite":
+    print("creating event")
+    print(createEvent(payload.get("data")))
 
-
-    print(responseMessage)
-    print(payload)
+elif payload.get("type") == "email":
+    print("sending email")
+    data = payload.get("data")
+    print(send_message(create_message(data)))
