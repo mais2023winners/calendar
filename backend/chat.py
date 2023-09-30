@@ -1,6 +1,7 @@
 import openai
 import json
 from calendarEvent import createEvent
+from gmail import create_message
 
 openai.api_key = "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"
 
@@ -55,12 +56,14 @@ completion = openai.ChatCompletion.create(
         {"role": "system", "content": prompt},
         {
             "role": "user",
-            "content": "Hello! create an event for my calendar on october 17th 2023 at 5pm for 1 hour period. In that period, i want to do homework for my ECSE 223 class. Name the event `it finally worked`",
+            "content": "Hey, send an email to a.ghellach@gmail.com about how beautiful the weather is today.",
         },
     ],
 )
 
 payload = json.loads(completion.choices[0].message.content).get("payload")
+
+print(payload)
 
 if payload.get("type") == "calendar_invite":
     print("creating event")
@@ -68,3 +71,4 @@ if payload.get("type") == "calendar_invite":
 
 elif payload.get("type") == "email":
     data = payload.get("data")
+    create_message(data)
