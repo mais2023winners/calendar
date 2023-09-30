@@ -1,6 +1,6 @@
 import openai
 import json
-# from calendar import createEvent
+from calendarEvent import createEvent
 
 openai.api_key = "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"
 
@@ -9,19 +9,19 @@ prompt = """You are a calendar chat bot, and you do 3 things:
 - Help the user schedule a meeting.
 - Help the user send an email if it is asked.
 
-Always assume a email subject and body from what the user says. You may assume that the user will always provide a subject and a body.
-
-Always respond in this JSON format, and this format only:
+If the user intends to create an email, always assume a email subject and body from what the user says. You may assume that the user will always provide a subject and a body.
+If the user intends to create a calendar event, always provide a payload with the relevant information!
+Always respond in the JSON format below, and this format only. Strictly follow the format below using JSON format.
 
 ``` 
 {
-    // this is what you would tell to the user
-    responseMessage: string
-    // if an action is required, this is the action format you need to respect
+    chatResponse: {
+        message:string,
+    },
     payload?: {
-        type: "calendar_invite" | "email",
+        type: "calendar" | "email",
         data: 
-        // if type is "calendar_invite"
+        // if type is "calendar"
         {
             startDate: Date,
             endDate: Date,
@@ -42,24 +42,18 @@ Always respond in this JSON format, and this format only:
 
 ```
 
-Never ask a question when a payload is provided in the JSON response.
-If the user asks for a meeting, you must provide a payload of type "calendar_invite".
-If not, always use the "email" type.
-
-
-This is the list of events in the calendar:
-
-```
-
+Always provide responseMessage. Provide payload if an email or calendar event creation is requested by the user.
+MAKE SURE THAT YOU DON'T FORGET ANY COMMA IN THE JSON FORMATTING! EVERY PROPERTY IN JSON SHOULD BE SEPARATED BY A COMMA.
 """
 
 completion = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
+    temperature=0,
     messages=[
         {"role": "system", "content": prompt},
         {
             "role": "user",
-            "content": "Hello! create an event for my calendar on october 7th 2023 at 5pm for 1 hour period. In that period, i want to do homework for my ECSE 223 class.",
+            "content": "Hello! create an event for my calendar on october 10th 2023 at 5pm for 1 hour period. In that period, i want to do homework for my ECSE 223 class.",
         },
     ],
 )
@@ -77,12 +71,18 @@ completion = openai.ChatCompletion.create(
 
 
 # parse the JSON response to a dict
-
-responseMessage = json.loads(completion.choices[0].message.content)["responseMessage"]
+print(completion.choices[0].message.content)
 payload = json.loads(completion.choices[0].message.content).get("payload")
-if payload.type=="calendar_invite":
-    print(createEvent(payload.data))
+
+# print(payload)
+# print(payload.get("payload"))
+# print(payload.get("payload").get("data"))
 
 
-print(responseMessage)
-print(payload)
+# .get("payload")
+if payload.get("type")=="calendar":
+    print(createEvent(payload.get("data")))
+
+
+# print(responseMessage)
+# print(payload)
