@@ -1,7 +1,7 @@
 import openai
 import json
 from calendarEvent import createEvent
-from gmail import create_message
+from gmail import create_message, send_message
 
 openai.api_key = "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"
 
@@ -12,8 +12,8 @@ You are a calendar chat bot, and you do 3 things:
 - Help the user schedule a meeting.
 - Help the user send an email if it is asked.
 
-If the user intends to create an event, you must include the payload in the json format as displayed below!
-Below is the JSON format. Strictly follow the provided JSON format below.
+Always respond in this JSON format:
+
 {
     chatMessage: {
         message: string,
@@ -50,16 +50,17 @@ Remember, always respond using the required JSON format.
 """
 
 completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4",
     temperature=0,
     messages=[
         {"role": "system", "content": prompt},
         {
             "role": "user",
-            "content": "Hey, create an event on september 30th at 10pm named ecse223",
+            "content": "Hey, create an event on september 30th 2023 at 10pm named ecse223",
         },
     ],
 )
+
 print(completion.choices[0].message.content)
 payload = json.loads(completion.choices[0].message.content).get("payload")
 
@@ -70,5 +71,6 @@ if payload.get("type") == "calendar_invite":
     print(createEvent(payload.get("data")))
 
 elif payload.get("type") == "email":
+    print("sending email")
     data = payload.get("data")
-    create_message(data)
+    print(send_message(create_message(data)))

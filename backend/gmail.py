@@ -7,12 +7,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
-SCOPES = ['https://mail.google.com/']
+SCOPES = ["https://mail.google.com/"]
 
+creds = Credentials.from_authorized_user_file("token.json", SCOPES)
 
-creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-
-service = build('gmail', 'v1', credentials=creds)
+service = build("gmail", "v1", credentials=creds)
 
 
 def extract_content(data):
@@ -23,25 +22,18 @@ def extract_content(data):
 
 
 def create_message(data):
-    to_emails = ", ".join(data['to'])
-    message = MIMEText(data['body'])
-    message['to'] = to_emails
-    message['from'] = "me"
-    message['subject'] = data['subject']
-    return {'raw': base64.urlsafe_b64encode(message.as_string().encode()).decode()}
+    to_emails = ", ".join(data["to"])
+    message = MIMEText(data["body"])
+    message["to"] = to_emails
+    message["from"] = "me"
+    message["subject"] = data["subject"]
+    return {"raw": base64.urlsafe_b64encode(message.as_bytes()).decode()}
 
 
-def send_message(service, user_id, message):
+def send_message(message):
     try:
-        message = (service.users().messages().send(userId=user_id, body=message)
-                   .execute())
-        print('Message Id: %s' % message['id'])
+        message = service.users().messages().send(userId="me", body=message).execute()
+        print("Message Id: %s" % message["id"])
         return message
     except Exception as error:
         print(error)
-
-
-json_data = {'to': ['reheanrehean@gmail.com', 'rehean.thillai@gmail.com', 'a.ghellach@gmail.com'], 'subject': '2 times?', 'body': 'dededed'}
-message = create_message(json_data)
-# print(json_data['body'])
-print(send_message(service=service, user_id='me', message=message))
