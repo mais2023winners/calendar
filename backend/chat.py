@@ -3,6 +3,7 @@ import json
 from calendarEvent import createEvent
 from gmail import create_message, send_message
 
+
 def ConnectToGPT(userMessage: str):
     openai.api_key = "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"
 
@@ -16,27 +17,14 @@ def ConnectToGPT(userMessage: str):
     Always respond in this JSON format:
 
 
-{
-    chatMessage: {
-        message: string,
-    },
-    payload?: {
-        type: "calendar_invite" | "email",
-        data: 
-        // if type is "calendar"
-        {
-            startDate: Date,
-            endDate: Date,
-            // name of the event
-            summary: string,
-            description?: string,
-            attendeesEmailAddresses?: string[]  
-            location?: string
-        }
+    {
+        chatMessage: {
+            message: string,
+        },
         payload?: {
             type: "calendar_invite" | "email",
             data: 
-            // if type is "calendar_invite"
+            // if type is "calendar"
             {
                 startDate: Date,
                 endDate: Date,
@@ -46,11 +34,25 @@ def ConnectToGPT(userMessage: str):
                 attendeesEmailAddresses?: string[]  
                 location?: string
             }
-            // if type is "email"
-            {
-                to: string[],
-                subject: string,
-                body: string
+            payload?: {
+                type: "calendar_invite" | "email",
+                data: 
+                // if type is "calendar_invite"
+                {
+                    startDate: Date,
+                    endDate: Date,
+                    // name of the event
+                    summary: string,
+                    description?: string,
+                    attendeesEmailAddresses?: string[]  
+                    location?: string
+                }
+                // if type is "email"
+                {
+                    to: string[],
+                    subject: string,
+                    body: string
+                }
             }
         }
     }
@@ -64,28 +66,33 @@ def ConnectToGPT(userMessage: str):
 
     """
 
-completion = openai.ChatCompletion.create(
-    model="gpt-4",
-    temperature=0,
-    messages=[
-        {"role": "system", "content": prompt},
-        {
-            "role": "user",
-            "content": "Hey, create an event on september 30th 2023 at 10pm named ecse223",
-        },
-    ],
-)
+    completion = openai.ChatCompletion.create(
+        model="gpt-4",
+        temperature=0,
+        messages=[
+            {"role": "system", "content": prompt},
+            {
+                "role": "user",
+                "content": userMessage,
+            },
+        ],
+    )
 
-print(completion.choices[0].message.content)
-payload = json.loads(completion.choices[0].message.content).get("payload")
+    print(completion.choices[0].message.content)
+    payload = json.loads(completion.choices[0].message.content).get("payload")
 
-print(payload)
+    print(payload)
 
-if payload.get("type") == "calendar_invite":
-    print("creating event")
-    print(createEvent(payload.get("data")))
+    try:
+        if payload.get("type") == "calendar_invite":
+            print("creating event")
+            print(createEvent(payload.get("data")))
 
-elif payload.get("type") == "email":
-    print("sending email")
-    data = payload.get("data")
-    print(send_message(create_message(data)))
+        elif payload.get("type") == "email":
+            print("sending email")
+            data = payload.get("data")
+            print(send_message(create_message(data)))
+    except:
+        print("no payload")
+
+    return json.loads(completion.choices[0].message.content)
