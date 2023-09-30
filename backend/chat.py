@@ -17,7 +17,7 @@ Always respond in this JSON format:
 {
     chatMessage: {
         message: string,
-    }
+    },
     payload?: {
         type: "calendar_invite" | "email",
         data: 
@@ -61,19 +61,11 @@ completion = openai.ChatCompletion.create(
     ],
 )
 
-print(completion.choices[0].message)
-responseMessage = json.loads(completion.choices[0].message.content)["responseMessage"]
-print(responseMessage)
 payload = json.loads(completion.choices[0].message.content).get("payload")
 
-if payload.type == "calendar_invite":
-    print(createEvent(payload.data))
+if payload.get("type") == "calendar_invite":
+    print("creating event")
+    print(createEvent(payload.get("data")))
 
 elif payload.get("type") == "email":
     data = payload.get("data")
-elif payload.get("type") == "calendar_invite":
-    date = payload.get("calendar_invite")
-
-
-print(responseMessage)
-print(payload)
