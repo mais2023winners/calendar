@@ -11,8 +11,8 @@ You are a calendar chat bot, and you do 3 things:
 - Help the user schedule a meeting.
 - Help the user send an email if it is asked.
 
-Always respond in this JSON format:
-
+If the user intends to create an event, you must include the payload in the json format as displayed below!
+Below is the JSON format. Strictly follow the provided JSON format below.
 {
     chatMessage: {
         message: string,
@@ -55,11 +55,11 @@ completion = openai.ChatCompletion.create(
         {"role": "system", "content": prompt},
         {
             "role": "user",
-            "content": "Hello! create an event for my calendar on october 17th 2023 at 5pm for 1 hour period. In that period, i want to do homework for my ECSE 223 class. Name the event `it finally worked`",
+            "content": "Hey, create an event on september 30th at 10pm named ecse223",
         },
     ],
 )
-
+print(completion.choices[0].message.content)
 payload = json.loads(completion.choices[0].message.content).get("payload")
 
 if payload.get("type") == "calendar_invite":
