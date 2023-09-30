@@ -10,30 +10,17 @@ from googleapiclient.errors import HttpError
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
+if os.path.exists('token.json'):
+    creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+service = build('calendar', 'v3', credentials=creds)
+
 
 def createEvent(e):
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
     creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
     try:
-        service = build('calendar', 'v3', credentials=creds)
 
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
@@ -52,19 +39,39 @@ def createEvent(e):
             'attendees': e.get("attendeesEmailAddresses", []),
         }
         event = service.events().insert(calendarId='primary', body=event).execute()
-        print("ehhello")
         return f'Event created: {event.get("htmlLink")}'
     except HttpError as error:
         print('An error occurred: %s' % error)
 
+
 tester = {
-    "startDate": "2023-10-5T09:00:00-07:00",
-    "endDate": "2023-10-6T09:00:00-07:00",
+    "startDate": "2023-09-30T17:00:00-07:00",
+    "endDate": "2023-09-30T18:00:00-07:00",
     # // name of the event
-    "summary": "THis is a tester summary",
-    "description": None,
+    "summary": "Cool Event for Cool Kids",
+    "description": "this is a very cool event pls come",
     "attendeesEmailAddresses": [],
-    "location": None
+    "location": "mcgill trottier building"
 }
 if __name__ == '__main__':
     createEvent(tester)
+
+
+def secondFetch():
+    page_token = None
+    while True:
+        events = service.events().list(calendarId='primary', pageToken=page_token).execute()
+        for event in events['items']:
+            event_data = [event['start'], event['end']]
+            # print(events['location'])
+            if 'location' in event:
+                event_data.append(event['location'])
+            if 'summary' in events:
+                event_data.append(event['summary'])
+            if 'description' in event:
+                event_data.append(event['description'])
+        page_token = events.get('nextPageToken')
+        if not page_token:
+            break
+
+    return event_data
