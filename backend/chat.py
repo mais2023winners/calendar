@@ -66,8 +66,20 @@ completion = openai.ChatCompletion.create(
 
 # parse the JSON response to a dict
 
-responseMessage = json.loads(completion.choices[0].message.content)["responseMessage"]
+responseMessage = json.loads(completion.choices[0].message.content)[
+    "responseMessage"]
 payload = json.loads(completion.choices[0].message.content).get("payload")
+# print(payload)
+# data = json.loads(completion.choices[0].message.content).get("data")
 
-print(responseMessage)
-print(payload)
+if (payload.get("type") == "email"):
+    data = payload.get("data")
+elif (payload.get("type") == "calendar_invite"):
+    date = payload.get("calendar_invite")
+
+
+
+# print(responseMessage)
+# print(payload)
+
+print(data)
