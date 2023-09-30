@@ -86,7 +86,7 @@ def ConnectToGPT(userMessage: str, userToken: json):
     try:
         if payload.get("type") == "calendar_invite":
             print("creating event")
-            print(createEvent(payload.get("data"),userToken))
+            print(createEvent(payload.get("data"), userToken))
 
         elif payload.get("type") == "email":
             print("sending email")
