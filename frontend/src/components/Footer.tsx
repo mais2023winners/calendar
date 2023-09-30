@@ -7,7 +7,7 @@ const Footer = ({ inputMessage, setInputMessage, handleSendMessage }) => {
   	<Input
     	placeholder="Type Something..."
     	border="none"
-    	borderRadius="none"
+    	borderRadius="15"
     	_focus={{
       	border: "1px solid black",
     	}}
@@ -18,11 +18,13 @@ const Footer = ({ inputMessage, setInputMessage, handleSendMessage }) => {
     	}}
     	value={inputMessage}
     	onChange={(e) => setInputMessage(e.target.value)}
+		marginRight="30px"
+		
   	/>
   	<Button
     	bg="black"
     	color="white"
-    	borderRadius="none"
+    	borderRadius="15"
     	_hover={{
       	bg: "white",
       	color: "black",
