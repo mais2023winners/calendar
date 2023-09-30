@@ -92,7 +92,8 @@ def ConnectToGPT(userMessage: str, userToken: json):
             print("sending email")
             data = payload.get("data")
             print(send_message(create_message(data)))
-    except:
+    except Exception as e:
+        print(e)
         print("no payload")
 
     return json.loads(completion.choices[0].message.content)
