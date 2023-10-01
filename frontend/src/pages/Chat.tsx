@@ -37,7 +37,12 @@ const Chat = () => {
 				"scope": "https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/calendar openid https://mail.google.com/ https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
 				"token_type": "Bearer",
 				"id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImI5YWM2MDFkMTMxZmQ0ZmZkNTU2ZmYwMzJhYWIxODg4ODBjZGUzYjkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI3NDk2MzY0NjEyMi1pajFwaXBtb2wzMGNmc3B2cjBxMXY5cmI0MHF1ZGUydi5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6Ijc0OTYzNjQ2MTIyLWlqMXBpcG1vbDMwY2ZzcHZyMHExdjlyYjQwcXVkZTJ2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTAxMTU0NzAxMzkwMzAzMzcwODgzIiwiZW1haWwiOiJtYWlzaGFja3NhY2NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJ6RzJnN1o1Q3ZoV0NBdGYxbnl2Zm53IiwibmFtZSI6Ik1BSVMgSEFDS1MiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTFhRbS1lQ2swZ0ZxUnJwOHhTRm9GMkd4UU1QV3IyRTlrY2FaZDNacVJKPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6Ik1BSVMiLCJmYW1pbHlfbmFtZSI6IkhBQ0tTIiwibG9jYWxlIjoiZW4iLCJpYXQiOjE2OTYwMjgzMjQsImV4cCI6MTY5NjAzMTkyNH0.NMa6CRQ9ncrONvtdzjJSUY1Z9um4Y8e8vI-fN_R1fcxfeasy6zWjj9J2ZWVWhqsM23k5dD6HVHAm7aiDwss9u3SXusuY8bAqcbScCJ_UUbSxO39YEMNJN35c4Rg2i0-FRMb2Gb1SIHouoGWlfzNJY6c93Bxx3-KGgOPqgKJs-Oyu6BWmzT2d5eTgOqTAB74dMW3GqvwIn2WcVgzZ3QmnlcoWR7sgK7oM9MkOyR-a9IQu5FDJF7qeRsn01LOjV5UuvtUpp2xysFUBQtExqfe3MGOO9AZtax_p3D5Fn6iCjhk50d1eZ7NKSEkyDAJTcSEGPMf3usBLlL3KOu40SHFPTQ"
-			}
+			},
+			messages: messages.slice(0, messages.length - 1).map((message) => ({
+				role: message.from === "computer" ? "assistant" : "user",
+				content: message.text,
+			}))
+
 		})
 			.then(response => {
 				console.log('Success:', response.data.chatMessage.message);
