@@ -1,8 +1,11 @@
 from flask import Flask, request
 from chat import ConnectToGPT
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+
+CORS(app, origins=["*"])
 
 
 @app.route("/Ask_GPT", methods=["POST"])
