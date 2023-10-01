@@ -17,6 +17,7 @@ const Footer = ({ inputMessage, setInputMessage, handleSendMessage, loading }) =
 					borderWidth: "1px",
 					border: "1px solid gray",
 					boxShadow: "none",
+					// @ts-ignore
 					boxShadow: "0 0 10px rgba(0,0,0,0.1)"
 				}}
 				onKeyPress={(e) => {

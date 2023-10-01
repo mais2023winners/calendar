@@ -5,6 +5,7 @@ import { FiLink } from "react-icons/fi";
 const Messages = ({ messages }) => {
 	const AlwaysScrollToBottom = () => {
 		const elementRef = useRef();
+		// @ts-ignore
 		useEffect(() => elementRef.current.scrollIntoView());
 		return <div ref={elementRef} />;
 	};
@@ -38,7 +39,6 @@ const Messages = ({ messages }) => {
 								color="black"
 								style={{
 									border: "1px solid black",
-									boxShadow: "none",
 									boxShadow: "0 0 10px rgba(0,0,0,0.1)"
 								}}
 							></Avatar>

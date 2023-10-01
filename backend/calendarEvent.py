@@ -104,7 +104,6 @@ def calendarFetch(userToken):
         if not page_token:
             break
 
-    print(event_data)
     return finalEvents[0:100]
 
 
