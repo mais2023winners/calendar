@@ -1,15 +1,18 @@
-import openai
+import openai, json
+from calendarEvent import createEvent, calendarFetch
+from contacts import contactFetch
 import datetime
-import json
-from calendarEvent import createEvent
 from gmail import create_message, send_message
 
 
 def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
     openai.api_key = "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"
 
-    prompt = """
+    event = calendarFetch(userToken)
+    contacts = str(contactFetch())
 
+    prompt = (
+        """
     You are a calendar chat bot, and you do 3 things:
     - Help the user find availabilites for a meeting. You will be given a list of events, and you will need to return a list of available time slots for a meeting. The events are sorted by start time in ascending order. You may assume that the list of events is non-empty. Furthermore, the start time of an event will always be before the end time.
     - Help the user schedule a meeting.
@@ -64,8 +67,16 @@ def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
 
     Remember, always respond using the required JSON format.
     
-    For reference, today is """ + str(
-        datetime.datetime.now()
+    For reference, today is """
+        + str(datetime.datetime.now())
+        + """if the user asks you to email a specific person providing their name, look through these names and email addreses that are the user's contacts:
+        """
+        + str(contacts)
+        + """
+
+    When the user asks you about their schedule or calendar, use the following events:
+    """
+        + str(event)
     )
 
     print(prompt)
