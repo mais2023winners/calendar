@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Messages from "../components/Message";
 import "../index.css"
+import axios from "axios";
 
 const Chat = () => {
   const [messages, setMessages] = useState([
@@ -26,13 +27,19 @@ const Chat = () => {
 
 	setMessages((old) => [...old, { from: "me", text: data }]);
 	setInputMessage("");
+	// e.preventDefault();
+	axios.post('http://localhost:8000/Ask_GPT', inputMessage)
+		.then(response => {
+		console.log('Success:', response.data.chatMessage.message);
+		setMessages((old) => [...old,{from:"computer", text: response.data.chatMessage.message}])
 
-	setTimeout(() => {
-  	setMessages((old) => [...old, { from: "computer", text: data }]);
-	}, 1000);
+		})
+		.catch(error => {
+		console.error('Error:', error);
+		});
   };
   const chatStyle = {
-	height: 'calc(100vh - 116px)'
+	height: 'calc(100vh - 112px)'
   };
   return (
 	<div style={chatStyle}>
