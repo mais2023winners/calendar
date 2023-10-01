@@ -19,7 +19,7 @@ def Ask_GPT():
     userToken["client_secret"] = "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"
     # this should be handeled by React, I do not know how it looks like haha
     response = ConnectToGPT(
-        userMessage, userToken
+        userMessage, userToken, request.json.get("history")
     )  # plz ensure that the person working on chat.py is handling the response properly ...
     return response
 

@@ -9,17 +9,6 @@ from google.oauth2.credentials import Credentials
 
 SCOPES = ["https://mail.google.com/"]
 
-creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-
-service = build("gmail", "v1", credentials=creds)
-
-
-def extract_content(data):
-    email_data = data["data"]
-    recipients = email_data["to"]
-    subject = email_data["subject"]
-    body = email_data["body"]
-
 
 def create_message(data):
     to_emails = ", ".join(data["to"])
@@ -30,7 +19,10 @@ def create_message(data):
     return {"raw": base64.urlsafe_b64encode(message.as_bytes()).decode()}
 
 
-def send_message(message):
+def send_message(message, userToken):
+    creds = Credentials.from_authorized_user_info(userToken, SCOPES)
+    service = build("gmail", "v1", credentials=creds)
+
     try:
         message = service.users().messages().send(userId="me", body=message).execute()
         print("Message Id: %s" % message["id"])

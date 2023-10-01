@@ -1,4 +1,5 @@
 import openai
+import datetime
 import json
 from calendarEvent import createEvent
 from gmail import create_message, send_message
@@ -59,38 +60,51 @@ def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
 
     Attribute responseMessage is always required.
     If user asks you to perform an action, always populate the payload attribute properly.
+    ALWAYS RESPONSE WITH JSON FORMAT. ALWAYS !!!!
 
     Remember, always respond using the required JSON format.
+    
+    For reference, today is """ + str(
+        datetime.datetime.now()
+    )
 
-    ```
+    print(prompt)
 
-    """
     messageHistory: list[dict] = [{"role": "system", "content": prompt}]
     for dict in history:
         messageHistory.append(dict)
     messageHistory.append({"role": "user", "content": userMessage})
-    
+
     completion = openai.ChatCompletion.create(
-        model="gpt-4",
-        temperature = 0,
-        messages = messageHistory)
+        model="gpt-4", temperature=0, messages=messageHistory
+    )
 
     print(completion.choices[0].message.content)
-    payload = json.loads(completion.choices[0].message.content).get("payload")
-
-    print(payload)
 
     try:
+        payload = json.loads(completion.choices[0].message.content).get("payload")
+
+        print(payload)
         if payload.get("type") == "calendar_invite":
             print("creating event")
-            print(createEvent(payload.get("data"), userToken))
+            eventLink = createEvent(payload.get("data"), userToken)
+            response = json.loads(completion.choices[0].message.content)
+            response["eventLink"] = eventLink
+
+            return response
 
         elif payload.get("type") == "email":
             print("sending email")
             data = payload.get("data")
-            print(send_message(create_message(data)))
+            print(send_message(create_message(data), userToken))
+        else:
+            print("no action required")
+            return json.loads(completion.choices[0].message.content).get("chatMessage")
+
     except Exception as e:
         print(e)
-        print("no payload")
+        # return {
+        #     "chatMessage": {"message": completion.choices[0].message.content},
+        # }
 
     return json.loads(completion.choices[0].message.content)

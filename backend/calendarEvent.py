@@ -28,6 +28,11 @@ def createEvent(e, userToken):
     creds = Credentials.from_authorized_user_info(userToken, SCOPES)
     service = build("calendar", "v3", credentials=creds)
 
+    attendees = []
+    if "attendeesEmailAddresses" in e:
+        for email in e["attendeesEmailAddresses"]:
+            attendees.append({"email": email})
+
     try:
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
@@ -43,10 +48,11 @@ def createEvent(e, userToken):
                 "dateTime": e["endDate"],
                 "timeZone": "America/Montreal",
             },
-            "attendees": e.get("attendeesEmailAddresses", []),
+            "attendees": attendees,
         }
         event = service.events().insert(calendarId="primary", body=event).execute()
-        return f'Event created: {event.get("htmlLink")}'
+        eventLink = event.get("htmlLink")
+        return eventLink
     except HttpError as error:
         print("An error occurred: %s" % error)
 
