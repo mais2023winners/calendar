@@ -6,7 +6,7 @@ from gmail import create_message, send_message
 
 
 def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
-    openai.api_key = "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"
+    openai.api_key = "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"
 
     event = calendarFetch(userToken)
     contacts = str(contactFetch(userToken))
