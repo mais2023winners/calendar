@@ -1,11 +1,13 @@
 import openai, json
 from calendarEvent import createEvent, calendarFetch
+from contacts import contactFetch
 from gmail import create_message, send_message
 
 def ConnectToGPT(userMessage: str, userToken: json):
     openai.api_key = "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"
 
     event = calendarFetch(userToken)
+    contacts = str(contactFetch())
     prompt = """
 
     You are a calendar chat bot, and you do 3 things:
@@ -61,6 +63,9 @@ def ConnectToGPT(userMessage: str, userToken: json):
 
     Remember, always respond using the required JSON format.
 
+    if the user asks you to email a specific person providing their name, look through these names and email addreses that are the user's contacts:
+        """ + str(contacts) + """
+
     When the user asks you about their schedule or calendar, use the following events:
     """ + str(event)
     completion = openai.ChatCompletion.create(
@@ -97,7 +102,7 @@ def ConnectToGPT(userMessage: str, userToken: json):
     return json.loads(completion.choices[0].message.content)
 
 
-ConnectToGPT("create an event on october 4th from 12pm to 1pm, the event is to celebrate ahmed's birthday he is my favorite lamb ", {
+ConnectToGPT(" email achraf letting him know he is a bitch, i hate him like i hate myself and he smells ", {
     "access_token": "ya29.a0AfB_byC_Agn23bFWIy9UAYu1JUoDP5oEGrVrQ8GUE9U5yo0LhNBjmBLNAVfWgH0Yu3SI6Rhp2cJ0ja0HTDqFFJjnx331O8BQJGrpoqwjqzSPlqozCdOQ6ohrx8VUQB6vv01ai3Y7ktlBsNE5evdBC7C_G3k3AJS6I0f9aCgYKAS4SARMSFQGOcNnCAr1Up2OOgYX2shorFqnmkw0171",
     "expires_in": 3599,
     "refresh_token": "1//0dujYTmsTO4o1CgYIARAAGA0SNwF-L9IrCq-nvJ5ykQCqzvp3aqfo_fC40rsCEYJ6V7xN5Lm5-JgLbaPZoF_Nt51Qbn9l0cb-aoM",
