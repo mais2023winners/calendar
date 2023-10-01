@@ -70,55 +70,18 @@ export default function Login() {
                     spacing={{ base: 8 }}
                     maxW={{ lg: 'lg' }}>
                     <Stack spacing={4}>
-                        <Heading
-                            color={'gray.800'}
-                            lineHeight={1.1}
-                            fontSize={{ base: '2xl', sm: '3xl', md: '4xl' }}>
-                            Join our team
-                            <Text as={'span'} bgGradient="linear(to-r, red.400,pink.400)" bgClip="text">
-                                !
-                            </Text>
-                        </Heading>
-                        <Text color={'gray.500'} fontSize={{ base: 'sm', sm: 'md' }}>
-                            We’re looking for amazing engineers just like you! Become a part of our
-                            rockstar engineering team and skyrocket your career!
+                        <Text fontSize={{ base: 'sm', sm: 'md' }}>
+                            Meet TimeWiz, your new best friend for managing your busy life. Are you tired of struggling with your calendar? TimeWiz is here to make it simple. With us, you can effortlessly schedule and keep track of your events. And guess what? You can even send emails without leaving the app! Join us on this journey to make your life easier. Sign up now and let TimeWiz help you manage your time like a pro!
                         </Text>
                     </Stack>
                     <Box as={'form'} mt={10}>
                         <Stack spacing={4}>
-                            <Input
-                                placeholder="Firstname"
-                                bg={'gray.100'}
-                                border={0}
-                                color={'gray.500'}
-                                _placeholder={{
-                                    color: 'gray.500',
-                                }}
-                            />
-                            <Input
-                                placeholder="firstname@lastname.io"
-                                bg={'gray.100'}
-                                border={0}
-                                color={'gray.500'}
-                                _placeholder={{
-                                    color: 'gray.500',
-                                }}
-                            />
-                            <Input
-                                placeholder="+1 (___) __-___-___"
-                                bg={'gray.100'}
-                                border={0}
-                                color={'gray.500'}
-                                _placeholder={{
-                                    color: 'gray.500',
-                                }}
-                            />
-                            <Button fontFamily={'heading'} bg={'gray.200'} color={'gray.800'}>
-                                <Link href="https://accounts.google.com/o/oauth2/v2/auth?scope=email profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.modify https://mail.google.com/
-                                https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/contacts.readonly&access_type=offline&redirect_uri=http://localhost:5173/google-redirect&response_type=code&client_id=74963646122-ij1pipmol30cfspvr0q1v9rb40qude2v.apps.googleusercontent.com"
-                                >
-                                    Login with Google
-                                </Link>
+                            <Button onClick={() => {
+                                window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?scope=email profile https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/gmail.modify https://mail.google.com/
+                                https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/contacts.readonly&access_type=offline&redirect_uri=http://localhost:5173/google-redirect&response_type=code&client_id=74963646122-ij1pipmol30cfspvr0q1v9rb40qude2v.apps.googleusercontent.com`
+                            }} fontFamily={'heading'} bg={'gray.200'} color={'gray.800'} flexDirection={"row"}>
+                                <img src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" width={"20px"} style={{ marginRight: "10px" }} /> Login with Google
+                                {/* </Link> */}
                             </Button>
                         </Stack>
                     </Box>

@@ -8,7 +8,10 @@ import "../index.css"
 import axios from "axios";
 
 const Chat = () => {
-	const [messages, setMessages] = useState([]);
+	const [messages, setMessages] = useState([{
+		from: "computer",
+		text: "Hello, I'm Timewiz, your calendar and email personal assistant. How can I help you?",
+	}]);
 	const [inputMessage, setInputMessage] = useState("");
 	const [loading, setLoading] = useState(false);
 
