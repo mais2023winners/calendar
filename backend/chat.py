@@ -4,7 +4,7 @@ from calendarEvent import createEvent
 from gmail import create_message, send_message
 
 
-def ConnectToGPT(userMessage: str, userToken: json):
+def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
     openai.api_key = "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"
 
     prompt = """
@@ -65,18 +65,15 @@ def ConnectToGPT(userMessage: str, userToken: json):
     ```
 
     """
-
+    messageHistory: list[dict] = [{"role": "system", "content": prompt}]
+    for dict in history:
+        messageHistory.append(dict)
+    messageHistory.append({"role": "user", "content": userMessage})
+    
     completion = openai.ChatCompletion.create(
         model="gpt-4",
-        temperature=0,
-        messages=[
-            {"role": "system", "content": prompt},
-            {
-                "role": "user",
-                "content": userMessage,
-            },
-        ],
-    )
+        temperature = 0,
+        messages = messageHistory)
 
     print(completion.choices[0].message.content)
     payload = json.loads(completion.choices[0].message.content).get("payload")
