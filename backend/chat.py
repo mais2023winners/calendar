@@ -1,12 +1,9 @@
-import openai
-import json
+import openai, json
 from calendarEvent import createEvent
 from gmail import create_message, send_message
 
-
 def ConnectToGPT(userMessage: str, userToken: json):
     openai.api_key = "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"
-
     prompt = """
 
     You are a calendar chat bot, and you do 3 things:
@@ -67,14 +64,17 @@ def ConnectToGPT(userMessage: str, userToken: json):
     """
 
     completion = openai.ChatCompletion.create(
-        model="gpt-4",
-        temperature=0,
-        messages=[
-            {"role": "system", "content": prompt},
+        model = "gpt-4",
+        temperature = 0,
+        messages = [
+            {
+                "role": "system",
+                "content": prompt
+                },
             {
                 "role": "user",
                 "content": userMessage,
-            },
+                },
         ],
     )
 
@@ -84,16 +84,14 @@ def ConnectToGPT(userMessage: str, userToken: json):
     print(payload)
 
     try:
+        data = payload.get("data")
         if payload.get("type") == "calendar_invite":
-            print("creating event")
-            print(createEvent(payload.get("data"), userToken))
-
+            print("Creating the event...")
+            print(createEvent(data, userToken))
         elif payload.get("type") == "email":
-            print("sending email")
-            data = payload.get("data")
-            print(send_message(create_message(data)))
+            print("Sending the email...")
+            print(send_message(create_message(data), userToken))
     except Exception as e:
         print(e)
-        print("no payload")
 
     return json.loads(completion.choices[0].message.content)
