@@ -19,6 +19,7 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
+    Button,
 } from '@chakra-ui/react'
 import {
     FiHome,
@@ -62,7 +63,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             {...rest}>
             <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
                 <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-                    CalendarAI
+                    TimeWiz
                 </Text>
                 <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
             </Flex>
@@ -149,7 +150,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                                     alignItems="flex-start"
                                     spacing="1px"
                                     ml="2">
-                                    <Text fontSize="sm">Achraf Ghellach</Text>
+                                    <Text fontSize="sm">User Settings</Text>
                                     <Text fontSize="xs" color="gray.600">
 
                                     </Text>
@@ -162,7 +163,10 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                         <MenuList
                             bg={useColorModeValue('white', 'gray.900')}
                             borderColor={useColorModeValue('gray.200', 'gray.700')}>
-                            <MenuItem>Sign out</MenuItem>
+                            <MenuItem><Button onClick={() => {
+                                window.localStorage.removeItem('userSession');
+                                window.location.href = '/';
+                            }}>Sign out</Button></MenuItem>
                         </MenuList>
                     </Menu>
                 </Flex>

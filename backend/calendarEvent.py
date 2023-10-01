@@ -8,6 +8,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 import uuid
+import datetime
+
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
@@ -57,25 +59,53 @@ def createEvent(e, userToken):
         print("An error occurred: %s" % error)
 
 
-def calendarFetch():
+def calendarFetch(userToken):
     page_token = None
     while True:
+        creds = Credentials.from_authorized_user_info(userToken, SCOPES)
+        service = build("calendar", "v3", credentials=creds)
+
+        timeMin = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+        timeMin = timeMin.isoformat() + "Z"
+        timeMax = datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        timeMax = timeMax.isoformat() + "Z"
         events = (
-            service.events().list(calendarId="primary", pageToken=page_token).execute()
+            service.events()
+            .list(
+                calendarId="primary",
+                pageToken=page_token,
+                timeMin=timeMin,
+                timeMax=timeMax,
+            )
+            .execute()
         )
+        finalEvents = []
         for event in events["items"]:
-            event_data = [event["start"], event["end"]]
+            print(event)
+            if event.get("start") is None:
+                continue
+            event_data = {
+                "start": event["start"],
+                "end": event["end"],
+            }
             if "location" in event:
-                event_data.append(event["location"])
+                # event_data.append(event["location"])
+                event_data["location"] = event["location"]
+
             if "summary" in events:
-                event_data.append(event["summary"])
+                # event_data.append(event["summary"])
+                event_data["summary"] = event["summary"]
             if "description" in event:
-                event_data.append(event["description"])
+                # event_data.append(event["description"])
+                event_data["description"] = event["description"]
+            finalEvents.append(event_data)
+
         page_token = events.get("nextPageToken")
         if not page_token:
             break
 
-    return event_data
+    print(event_data)
+    return finalEvents[0:100]
 
 
 if __name__ == "__main__":

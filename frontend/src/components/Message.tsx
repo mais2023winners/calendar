@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { Avatar, Flex, Text, Link } from "@chakra-ui/react";
+import { Avatar, Flex, Text, Link, Icon } from "@chakra-ui/react";
+import { FiLink } from "react-icons/fi";
 
 const Messages = ({ messages }) => {
 	const AlwaysScrollToBottom = () => {
@@ -21,7 +22,7 @@ const Messages = ({ messages }) => {
 								maxW="350px"
 								my="1"
 								p="3"
-								borderRadius="15"
+								borderRadius="20"
 							>
 								<Text>{item.text}</Text>
 							</Flex>
@@ -32,22 +33,47 @@ const Messages = ({ messages }) => {
 						<Flex key={index} w="100%" align="center">
 							<Avatar
 								name="Computer"
-								src="https://avataaars.io/?avatarStyle=Transparent&topType=LongHairStraight&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
-								bg="blue.300"
+								src="https://png.pngtree.com/png-vector/20230407/ourmid/pngtree-chatbot-line-icon-vector-png-image_6680403.png"
+								bg="white"
+								color="black"
+								style={{
+									border: "1px solid black",
+									boxShadow: "none",
+									boxShadow: "0 0 10px rgba(0,0,0,0.1)"
+								}}
 							></Avatar>
 							<Flex
-								bg="#d8d8d8"
-								color="black"
+								bg="black"
+								color="white"
 								minW="30px"
 								maxW="350px"
 								my="1"
 								p="3"
-								borderRadius="15"
+								borderRadius="20"
 								marginLeft="3"
+								direction={"column"}
 							>
-								<Text>{item.text}</Text>
-								{item?.eventLink ? <Link href={item.eventLink} target="_blank" rel="noreferrer">Link to Calendar</Link> : null}
+								<p style={{
+									whiteSpace: "pre-line"
+								}}>{item.text}</p>
+								{item?.eventLink ? <Link
+									style={{
+										whiteSpace: "pre-line",
+										color: "blue"
+									}}
+									href={item.eventLink} target="_blank" rel="noreferrer">
+									<Icon
+										// mr="4"
+										fontSize="16"
+										_groupHover={{
+											color: 'white',
+										}}
+										as={FiLink}
+									/> <b>Link to Calendar</b>
+								</Link> : null}
+
 							</Flex>
+
 						</Flex>
 					);
 				}

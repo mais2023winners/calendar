@@ -9,10 +9,10 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/contacts.readonly']
+SCOPES = ["https://www.googleapis.com/auth/contacts.readonly"]
 
 
-def contactFetch():
+def contactFetch(userToken):
     """Shows basic usage of the People API.
     Prints the name of the first 10 connections.
     """
@@ -20,32 +20,28 @@ def contactFetch():
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
 
     try:
-        service = build('people', 'v1', credentials=creds)
+        creds = Credentials.from_authorized_user_info(userToken, SCOPES)
+        service = build("people", "v1", credentials=creds)
 
-        results = service.people().connections().list(
-            resourceName='people/me',
-            pageSize=10,
-            personFields='names,emailAddresses').execute()
-        connections = results.get('connections', [])
-        contacts=[]
+        results = (
+            service.people()
+            .connections()
+            .list(
+                resourceName="people/me",
+                pageSize=10,
+                personFields="names,emailAddresses",
+            )
+            .execute()
+        )
+        connections = results.get("connections", [])
+        contacts = []
         for person in connections:
-            display_name = person['names'][0]['displayName']
-            email_addresses = [email['value'] for email in person['emailAddresses']]
+            if person.get("emailAddresses") is None:
+                continue
+            display_name = person["names"][0]["displayName"]
+            email_addresses = [email["value"] for email in person["emailAddresses"]]
             contacts.append({display_name: email_addresses[0]})
         return contacts
     except HttpError as err:

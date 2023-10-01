@@ -6,13 +6,16 @@ from gmail import create_message, send_message
 
 
 def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
-    openai.api_key = "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"
+    openai.api_key = "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"
 
     event = calendarFetch(userToken)
-    contacts = str(contactFetch())
+    contacts = str(contactFetch(userToken))
 
     prompt = (
-        """
+        (
+            """
+            
+            Your name is TimeWiz.
     You are a calendar chat bot, and you do 3 things:
     - Help the user find availabilites for a meeting. You will be given a list of events, and you will need to return a list of available time slots for a meeting. The events are sorted by start time in ascending order. You may assume that the list of events is non-empty. Furthermore, the start time of an event will always be before the end time.
     - Help the user schedule a meeting.
@@ -68,15 +71,21 @@ def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
     Remember, always respond using the required JSON format.
     
     For reference, today is """
-        + str(datetime.datetime.now())
-        + """if the user asks you to email a specific person providing their name, look through these names and email addreses that are the user's contacts:
+            + str(datetime.datetime.now())
+            + """if the user asks you to email a specific person providing their name, look through these names and email addreses that are the user's contacts:
         """
-        + str(contacts)
-        + """
+            + str(contacts)
+            + """
 
-    When the user asks you about their schedule or calendar, use the following events:
+
+    You have access to the user's calendar. This is the list of events that the user has on their calendar:
     """
-        + str(event)
+            + str(event)
+        )
+        + """
+    
+    Make sure that whenever you return a date, format it to be readable by humans
+    """
     )
 
     print(prompt)
@@ -95,7 +104,9 @@ def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
     try:
         payload = json.loads(completion.choices[0].message.content).get("payload")
 
-        print(payload)
+        if payload == None:
+            print("no action required")
+            return json.loads(completion.choices[0].message.content)
         if payload.get("type") == "calendar_invite":
             print("creating event")
             eventLink = createEvent(payload.get("data"), userToken)
@@ -110,12 +121,12 @@ def ConnectToGPT(userMessage: str, userToken: json, history: list[dict]):
             print(send_message(create_message(data), userToken))
         else:
             print("no action required")
-            return json.loads(completion.choices[0].message.content).get("chatMessage")
+            return json.loads(completion.choices[0].message.content)
 
     except Exception as e:
         print(e)
-        # return {
-        #     "chatMessage": {"message": completion.choices[0].message.content},
-        # }
+        return {
+            "chatMessage": {"message": completion.choices[0].message.content},
+        }
 
     return json.loads(completion.choices[0].message.content)
