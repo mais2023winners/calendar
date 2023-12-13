@@ -11,3 +11,5 @@ The full description of our project is available here: https://devpost.com/softw
 
 # Conversation With TimeWiz
 ![image](https://github.com/timewizhq/timewiz/assets/108886534/0a0ee790-3457-4709-b014-6904951cff4e)
+
+* Please note that @AhmedAlRawi0's contributions are under the name of "Ahmed Mossa".
